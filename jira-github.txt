@@ -1,0 +1,2 @@
+Git Integration for Jira
+DC2 board <---> first_jira repo
