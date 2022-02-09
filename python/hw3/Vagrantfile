@@ -1,0 +1,46 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # defining an OS for the VMs
+  config.vm.box = "bento/centos-7.4"
+
+##################################################
+  
+  # configuring the VM
+  config.vm.define "vm1" do |vm_1|
+
+    # setting up networking
+    vm_1.vm.network "forwarded_port", guest: 80, host: 8020
+    vm_1.vm.network "private_network", ip: "192.168.56.2"
+
+    # assigning hostname
+    vm_1.vm.hostname = "centos-vm"
+    
+    # configuring of VM
+    vm_1.vm.provider "virtualbox" do |v|
+      
+      # changing VM's name
+      v.name = "python_3"
+
+      # customization the amount of memory on the VM
+      v.memory = "1024"
+      
+      # customization the amount of cpu on the VM
+      v.cpus = 1
+    
+    end
+    
+    # defining sync folder
+    vm_1.vm.synced_folder "./.sync/", "/sync"
+
+    # adding custom public ssh key for accessing the VM (for Ansible)
+  config.vm.provision "file", source: "./.ssh/id_rsa.pub", destination: "~/.ssh/available.pub"
+  config.vm.provision "shell", inline: <<-SHELL
+    cat /home/vagrant/.ssh/available.pub >> /home/vagrant/.ssh/authorized_keys
+  SHELL
+
+  end
+
+end

@@ -1,0 +1,4 @@
+Git Integration for Jira
+DC2 board <---> first_jira repo
+
+1. test commit for jira

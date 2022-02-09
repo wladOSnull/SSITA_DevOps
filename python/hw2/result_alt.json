@@ -1,0 +1,34 @@
+[
+    {
+        "pretty (another copy).json": {
+            "id": 17369214,
+            "number": "9.4",
+            "committer_name": "Xavier Grand",
+            "committer_email": "grand.xavier@gmail.com"
+        }
+    },
+    {
+        "pretty (3rd copy).json": {
+            "id": 17369212,
+            "number": "9.2",
+            "committer_name": "Xavier Grand",
+            "committer_email": "grand.xavier@gmail.com"
+        }
+    },
+    {
+        "pretty (copy).json": {
+            "id": 17369213,
+            "number": "9.3",
+            "committer_name": "Xavier Grand",
+            "committer_email": "grand.xavier@gmail.com"
+        }
+    },
+    {
+        "pretty.json": {
+            "id": 17369213,
+            "number": "9.3",
+            "committer_name": "Xavier Grand",
+            "committer_email": "grand.xavier@gmail.com"
+        }
+    }
+]
