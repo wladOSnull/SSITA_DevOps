@@ -1,1 +1,2 @@
-# first_jira
+# SSITA DevOps
+Repository for tasks / homeworks
