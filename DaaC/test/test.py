@@ -5,6 +5,7 @@ from diagrams.aws.network import ELB
 
 from diagrams.onprem.database import Postgresql
 import diagrams.onprem.database as dt
+from diagrams.generic.os import LinuxGeneral
 
 with Diagram("Web Service", show=False):
     ELB("lb") >> EC2("web") >> RDS("userdb")
@@ -12,3 +13,4 @@ with Diagram("Web Service", show=False):
     Postgresql("kek1")
     Postgresql("kek2")
     dt.Cassandra("casa")
+    LinuxGeneral("LG")

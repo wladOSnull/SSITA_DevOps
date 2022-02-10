@@ -7,26 +7,46 @@ from diagrams.onprem.ci import Jenkins
 from diagrams.onprem.iac import Ansible
 from diagrams.onprem.iac import Terraform
 
-# base technologies
+# base stuff
 from diagrams.onprem.compute import Server
-from diagrams.generic.virtualization import Virtualbox
-
-# OSs
-from diagrams.generic.os import Centos
-from diagrams.generic.os import Ubuntu
-from diagrams.generic.os import LinuxGeneral
 
 # base tools
-from diagrams.programming.language import Java
 from diagrams.onprem.database import Postgresql
-from diagrams.onprem.vcs import Git
-from diagrams.onprem.vcs import Github
 
 # entrypoint
 with Diagram("Geocitizen 2",  filename="Geocitizen2", show=False):
 
-    #github = Github("Geocit134")
     jenkins = Jenkins()
     ansible = Ansible()
     terraform = Terraform()
+        
+    # relatives
+    with Cluster(" "):
+        server_c = Server("CentOS")
+        psql = Postgresql()
 
+        server_c - psql
+
+    with Cluster(""):
+        server_u = Server("Ubuntu")
+        geo = Custom("", "./img/geocitizen.png")
+
+        server_u - geo
+
+    geo - Edge(color="blask", style="dashed") - psql
+
+    # orchestration
+    jenkins >> Edge(style="bold", color="red") \
+            >> [terraform, ansible]
+    
+    terraform >> Edge(style="dotted") \
+                >> jenkins
+
+    # provisioning
+    ansible >> Edge(label="config", color="black", style="bold") \
+            >> [psql, geo]
+
+    # building
+    terraform >> Edge(label="config", color="mediumslateblue", style="bold") \
+            >> [server_c,
+                server_u]

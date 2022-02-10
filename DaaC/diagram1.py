@@ -56,7 +56,7 @@ with Diagram("Geocitizen 1",  filename="Geocitizen1", show=False):
 
 
     jenkins \
-        >> Edge(label="call", style="bold", color="black") \
+        >> Edge(label="call 1", style="bold", color="black") \
         >> terraform
 
     terraform \
@@ -64,7 +64,7 @@ with Diagram("Geocitizen 1",  filename="Geocitizen1", show=False):
         >> jenkins
 
     jenkins \
-        >> Edge(label="call2", style="bold", color="black") \
+        >> Edge(label="call 2", style="bold", color="black") \
         >> ansible \
         >> Edge(label="get project", style="dashed") \
         << github
