@@ -25,13 +25,13 @@ with Diagram("Geocitizen 2",  filename="Geocitizen2", show=False):
         server_c = Server("CentOS")
         psql = Postgresql()
 
-        server_c - psql
+        server_c - Edge(label="contain") >> psql
 
     with Cluster(""):
         server_u = Server("Ubuntu")
         geo = Custom("", "./img/geocitizen.png")
 
-        server_u - geo
+        server_u - Edge(label="contain") >> geo
 
     geo - Edge(color="blask", style="dashed") - psql
 
@@ -47,6 +47,6 @@ with Diagram("Geocitizen 2",  filename="Geocitizen2", show=False):
             >> [psql, geo]
 
     # building
-    terraform >> Edge(label="config", color="mediumslateblue", style="bold") \
+    terraform >> Edge(label="create", color="mediumslateblue", style="bold") \
             >> [server_c,
                 server_u]
