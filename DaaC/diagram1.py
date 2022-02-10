@@ -30,9 +30,6 @@ with Diagram("Geocitizen 1",  filename="Geocitizen1", show=False):
     ansible = Ansible()
     terraform = Terraform()
 
-   # with Cluster("Remote Servers"):
-        
-        
     with Cluster("Ubuntu", direction="LR") as wer:
         java = Java()
         ubuntu = Ubuntu()
@@ -54,7 +51,6 @@ with Diagram("Geocitizen 1",  filename="Geocitizen1", show=False):
         Edge(label="jdbc:connector") \
         - psql
 
-
     jenkins \
         >> Edge(label="call 1", style="bold", color="black") \
         >> terraform
@@ -73,11 +69,6 @@ with Diagram("Geocitizen 1",  filename="Geocitizen1", show=False):
         >> Edge(label="create") \
         >> [centos, ubuntu]
 
-
     ansible \
         >> Edge(label="configure") \
-        >> tomcat
-
-    ansible \
-        >> Edge(label="configure") \
-        >> psql
+        >> [tomcat, psql]
