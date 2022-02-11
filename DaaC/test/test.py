@@ -7,6 +7,8 @@ from diagrams.onprem.database import Postgresql
 import diagrams.onprem.database as dt
 from diagrams.generic.os import LinuxGeneral
 
+from diagrams.aws.management import Config
+
 with Diagram("Web Service", show=False):
     ELB("lb") >> EC2("web") >> RDS("userdb")
     Postgresql("kek") >> dt.Scylla("kek2")
@@ -14,3 +16,4 @@ with Diagram("Web Service", show=False):
     Postgresql("kek2")
     dt.Cassandra("casa")
     LinuxGeneral("LG")
+    Config()

@@ -1,5 +1,5 @@
 # main
-from diagrams import Diagram, Cluster, Edge
+from diagrams import Diagram, Cluster, Edge, Node
 from diagrams.custom import Custom
 
 # DevOps tools
@@ -18,47 +18,52 @@ from diagrams.programming.language import Java
 # OSs
 from diagrams.generic.os import Centos
 from diagrams.generic.os import Ubuntu
-from diagrams.generic.os import LinuxGeneral
-from diagrams.generic.virtualization import Virtualbox
+from diagrams.onprem.client import User
+from diagrams.onprem.client import Client
 
 graph_attr = {"splines":"splines",}
 
 # entrypoint
 with Diagram("Geocitizen 3",  filename="Geocitizen3", show=False, graph_attr=graph_attr):
     
-    with Cluster("VMs", direction="BT"):
+    with Cluster("EC2", direction="BT"):
     
-        with Cluster("DB"):
+        with Cluster("Instance - DB"):
             centos = Centos()
             psql = Postgresql()
     
-            centos >> psql
+            #centos >> psql
 
-        with Cluster("Server"):
+        with Cluster("Instance - Server"):
             geo = Custom("", "./img/geocitizen.png")    
             maven = Custom("", "./img/maven.png")
             tomcat = Custom("", "./img/tomcat.png")
             java = Java()
             ubuntu = Ubuntu()
 
-            ubuntu >> [maven,
-                        java,
-                        tomcat]
+            maven - Edge(style="dotted") - geo
 
             java - Edge(style="dotted") - \
                     [tomcat,
                     maven,
                     geo]
             
-            tomcat >> Edge(style="dashed") >> geo
+            tomcat >> Edge(label="host", style="bold") << geo
         
-    geo - Edge(style="dotted") - psql
+    geo >> Edge(label="queries", color="darkgreen", style="bold") >> psql
     
-    vb = Virtualbox()
-    mint = Custom("", "./img/mint.png")
+    #vb = Virtualbox()
+    #mint = Custom("", "./img/mint.png")
+    jenkins = Jenkins()
+    ansible = Ansible()
+    terraform = Terraform()
 
-    vb >> Edge(style="dashed") << [ubuntu, centos]
-    mint >> Edge(style="dashed") << vb
+    jenkins >> Edge(label="call 1", color="red", style="bold") >> terraform
+    jenkins >> Edge(label="call 2", color="red", style="bold") >> ansible
+    ansible >> Edge(label="configure", color="black", style="bold") >> [tomcat, psql]
+    terraform >> Edge(label="create", color="black", style="bold") >> [ubuntu, centos]
+    terraform >> Edge(label="response", color="black", style="dotted") >> jenkins
 
-    
+    User("DevOps") >> Edge(label="run", style="bold", color="darkgreen") >> jenkins
+    Client("Clients") >> Edge(label="usage", style="bold", color="darkgreen") >> geo    
     

@@ -10,6 +10,8 @@ print(package['Package'],
         package['Version'],
         sep='\n')
 
+print("\n\n")
+
 ### printing all fields from header
 ##################################################
 for element in package:
@@ -19,5 +21,5 @@ for element in package:
 ##################################################
 '''
 Executing this script:
-~ python3 hw4_deb.py
+~ python3 hw4_deb.py ...
 '''

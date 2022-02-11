@@ -9,9 +9,11 @@ from diagrams.onprem.iac import Terraform
 
 # base stuff
 from diagrams.onprem.compute import Server
+from diagrams.aws.compute import EC2
 
 # base tools
 from diagrams.onprem.database import Postgresql
+from diagrams.onprem.vcs import Github
 
 # entrypoint
 with Diagram("Geocitizen 2",  filename="Geocitizen2", show=False):
@@ -19,16 +21,17 @@ with Diagram("Geocitizen 2",  filename="Geocitizen2", show=False):
     jenkins = Jenkins()
     ansible = Ansible()
     terraform = Terraform()
+    github = Github("Geocit134")
         
     # relatives
     with Cluster(" "):
-        server_c = Server("CentOS")
+        server_c = EC2("CentOS")
         psql = Postgresql()
 
         server_c - Edge(label="contain") >> psql
 
     with Cluster(""):
-        server_u = Server("Ubuntu")
+        server_u = EC2("Ubuntu")
         geo = Custom("", "./img/geocitizen.png")
 
         server_u - Edge(label="contain") >> geo
@@ -45,6 +48,8 @@ with Diagram("Geocitizen 2",  filename="Geocitizen2", show=False):
     # provisioning
     ansible >> Edge(label="config", color="black", style="bold") \
             >> [psql, geo]
+
+    ansible >> Edge(label="get project", style="dashed") << github
 
     # building
     terraform >> Edge(label="create", color="mediumslateblue", style="bold") \
