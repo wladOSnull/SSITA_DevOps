@@ -1,3 +1,6 @@
+### import of modules
+##################################################
+
 # main
 from diagrams import Diagram, Cluster, Edge
 from diagrams.custom import Custom
@@ -18,19 +21,60 @@ from diagrams.onprem.database import Postgresql
 from diagrams.onprem.client import User
 from diagrams.onprem.client import Client
 
+### configurtions for clusters
+##################################################
+
+# config attribute for legend cluster
+legend_attr = {
+    "fontsize": "24",
+    "bgcolor": "transparent",
+    "pencolor": "black",
+    "penwidth": "4.0",
+    "style": "dashed",
+    "splines":"spline",
+}
+
+# config attribute for AWS cluster
+aws_attr = {
+    "fontsize": "24",
+    "bgcolor": "darkgoldenrod1",
+    "splines":"spline",
+}
+
+# config attribute for VPC cluster
+vpc_attr = {
+    "fontsize": "22",
+    "bgcolor": "white",
+    "splines":"spline",
+}
+
+# config attribute for Instance Ubuntu cluster
+ubuntu_attr = {
+    "fontsize": "20",
+    "bgcolor": "#D8F2DEFF",
+    "splines":"spline",
+}
+
+# config attribute for Instance CentOS cluster
+centos_attr = {
+    "fontsize": "20",
+    "bgcolor": "#ECE8F6FF",
+    "splines":"spline",
+}
+
 ### entrypoint
 ##################################################
 
 with Diagram("Geocitizen",  filename="Geocitizen1", show=False):
 
     ### remote infrastructure
-    with Cluster("AWS"):
+    with Cluster("AWS", graph_attr=aws_attr):
 
         ### group of EC2 instances
-        with Cluster("VPC"):
+        with Cluster("VPC", graph_attr=vpc_attr):
 
             ### server instance
-            with Cluster("Instance Ubuntu", direction="LR") as wer:
+            with Cluster("Instance Ubuntu", direction="LR", graph_attr=ubuntu_attr) as wer:
                 
                 # variables
                 java = Java()
@@ -49,13 +93,13 @@ with Diagram("Geocitizen",  filename="Geocitizen1", show=False):
 
                 #tomcat >> Edge(label="usage", style="dashed") >> java
                 tomcat >> Edge(label="host",style="bold", color="darkgreen") >> geo
-                ec2_u - Edge(label="AMI", style="dotted") - ubuntu
+                ec2_u - Edge(label="AMI", color="black", style="dotted") - ubuntu
 
                 ### cheat for prettifying
                 tomcat >> Edge(color="#00000000") >> java
 
             ### DB instance
-            with Cluster("Instance CentOS", direction="BT"):
+            with Cluster("Instance CentOS", graph_attr=centos_attr):
                 
                 # variables
                 psql = Postgresql()
@@ -63,7 +107,7 @@ with Diagram("Geocitizen",  filename="Geocitizen1", show=False):
                 ec2_c = EC2()
 
                 # links
-                ec2_c - Edge(label="AMI", style="dotted") - centos          
+                ec2_c - Edge(label="AMI", color="black", style="dotted") - centos          
 
     # inter-groups links
     tomcat >> \
@@ -92,11 +136,11 @@ with Diagram("Geocitizen",  filename="Geocitizen1", show=False):
         >> ansible \
 
     terraform \
-        >> Edge(label="create") \
+        >> Edge(label="create", color="black") \
         >> [ec2_u, ec2_c]
 
     ansible \
-        >> Edge(label="configure") \
+        >> Edge(label="configure", color="black") \
         >> [tomcat, psql]
 
     ### cheat for prettifying
@@ -110,28 +154,29 @@ with Diagram("Geocitizen",  filename="Geocitizen1", show=False):
 ### legend
 ##################################################
 
-    # empty variables
-    none1 = Custom("", "./img/null.png")
-    none2 = Custom("", "./img/null.png")
-    none3 = Custom("", "./img/null.png")
-    none4 = Custom("", "./img/null.png")
-    none5 = Custom("", "./img/null.png")
-    none6 = Custom("", "./img/null.png")
-    none7 = Custom("", "./img/null.png")
-    
-    # descri[tion for all types of arrows
-    none1 \
-    >> Edge(label="to perform actions with\n creation/configuration/settig up") \
-    >> none2 \
-    >> Edge(label="to use\n / to interact with", color="darkgreen", style="bold") \
-    >> none3 \
-    >> Edge(label="to call/trigger for\n performing some actions", color="red", style="bold") \
-    >> none4 \
-    >> Edge(label="to response with\n some information/file/etc.", color="black", style="dotted") \
-    >> none5 \
-    >> Edge(label="to depend on ...\n / to use smth. to work", color="black", style="dashed") \
-    >> none6
+    with Cluster(label="Legend",graph_attr=legend_attr):
+        # empty variables
+        none1 = Custom("", "./img/null.png")
+        none2 = Custom("", "./img/null.png")
+        none3 = Custom("", "./img/null.png")
+        none4 = Custom("", "./img/null.png")
+        none5 = Custom("", "./img/null.png")
+        none6 = Custom("", "./img/null.png")
+        none7 = Custom("", "./img/null.png")
 
-    none6 \
-    - Edge(label="to consist\n / to contain", style="dotted") \
-    - none7
+        # descri[tion for all types of arrows
+        none1 \
+        >> Edge(label="to perform actions with\n creation/configuration/settig up", color="black") \
+        >> none2 \
+        >> Edge(label="to use\n / to interact with", color="darkgreen", style="bold") \
+        >> none3 \
+        >> Edge(label="to call/trigger for\n performing some actions", color="red", style="bold") \
+        >> none4 \
+        >> Edge(label="to response with\n some information/file/etc.", color="black", style="dotted") \
+        >> none5 \
+        >> Edge(label="to depend on ...\n / to use smth. to work", color="black", style="dashed") \
+        >> none6
+
+        none6 \
+        - Edge(label="to consist\n / to contain", color="black", style="dotted") \
+        - none7
