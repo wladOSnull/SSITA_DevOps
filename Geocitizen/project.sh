@@ -53,82 +53,69 @@ printf '%s\n' '0?<artifactId>maven-war-plugin<\/artifactId>?a' '<version>3.3.2</
 ### missing 'validator' attribute
 sed -i -E ':a;N;$!ba; s/org.hibernate/org.hibernate.validator/2' ${G_NAME}/"pom.xml"
 
-### delete duplicate of maven war plugin
+### remove duplicates
 ##################################################
 
 echo -e "##################################################\nRemoving duplicates\n##################################################\n"
 
+### function for deleting xml block with specified string
+function REMOVE_XML()
+{
+    ### $1 - UP TO
+    ### $2 - DOWN TO
+    echo -e "${1} ---------- ${2}\n"
+
+    ### delete duplicate TOP
+    EDGE=true
+    while [ "$EDGE" = true ]; do
+        
+        if ! [[ "$DUPLICATE_LINE" == "${1}" ]]; then
+            sed -i "${DUPLICATE_NUMBER}d" ${G_NAME}/pom.xml
+        
+            ((DUPLICATE_NUMBER--))
+        else
+            EDGE=false
+            ((DUPLICATE_NUMBER+=1))    
+        fi
+        
+        DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
+        DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
+    done
+
+    ### delete duplicate DOWN
+    EDGE=true
+    while [ "$EDGE" = true ]; do
+        
+        if ! [[ "$DUPLICATE_LINE" == "${2}" ]]; then
+            sed -i "${DUPLICATE_NUMBER}d" ${G_NAME}/pom.xml
+
+            DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
+            DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
+        else
+            EDGE=false
+        fi
+    done
+}
+
+### get the duplicate of maven war plugin
 DUPLICATE_NUMBER=`grep -n -m1 'maven-war' ${G_NAME}/pom.xml | cut -f1 -d:`
 DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
 DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
+TOP="<plugins>"
+DOWN="<plugin>"
 
-### delete duplicate TOP
-EDGE=true
-while [ "$EDGE" = true ]; do
-    
-    if ! [[ "$DUPLICATE_LINE" == "<plugins>" ]]; then
-        sed -i "${DUPLICATE_NUMBER}d" ${G_NAME}/pom.xml
-    
-        ((DUPLICATE_NUMBER--))
-    else
-        EDGE=false
-        ((DUPLICATE_NUMBER+=1))    
-    fi
-    
-    DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
-    DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
-done
+### remove it
+REMOVE_XML $TOP $DOWN
 
-### delete duplicate DOWN
-EDGE=true
-while [ "$EDGE" = true ]; do
-    
-    if ! [[ "$DUPLICATE_LINE" == "<plugin>" ]]; then
-        sed -i "${DUPLICATE_NUMBER}d" ${G_NAME}/pom.xml
-
-        DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
-        DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
-    else
-        EDGE=false
-    fi
-done
-
-### duplicate of postgresql block
-##################################################
+### get the duplicate of postgresql plugin
 DUPLICATE_NUMBER=`grep -n "org.postgresql" ${G_NAME}/pom.xml | sed -n 2p | cut -f1 -d:`
 DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
 DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
+TOP="</dependency>"
+DOWN="<!--Servlet API-->"
 
-### delete duplicate TOP
-EDGE=true
-while [ "$EDGE" = true ]; do
-    
-    if ! [[ "$DUPLICATE_LINE" == "</dependency>" ]]; then
-        sed -i "${DUPLICATE_NUMBER}d" ${G_NAME}/pom.xml
-    
-        ((DUPLICATE_NUMBER--))
-    else
-        EDGE=false
-        ((DUPLICATE_NUMBER+=1))    
-    fi
-    
-    DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
-    DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
-done
-
-### delete duplicate DOWN
-EDGE=true
-while [ "$EDGE" = true ]; do
-    
-    if ! [[ "$DUPLICATE_LINE" == "<!--Servlet API-->" ]]; then
-        sed -i "${DUPLICATE_NUMBER}d" ${G_NAME}/pom.xml
-
-        DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
-        DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
-    else
-        EDGE=false
-    fi
-done
+### remove it
+REMOVE_XML $TOP "${DOWN}"
 
 ### fixing front-end
 ##################################################
