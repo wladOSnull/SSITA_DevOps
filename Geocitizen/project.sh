@@ -26,13 +26,17 @@ G_EMAIL_PASSWORD="???"
 ##################################################
 
 ### removing
+echo -e "##################################################\nRemoving the old project\n##################################################\n"
 rm -rf $G_NAME
 
 ### getting
-eval git clone $G_REPOSITORY
+echo -e "##################################################\nClonning the project again\n##################################################\n"
+git clone $G_REPOSITORY
 
 ### fixing dependencies and packets in 'pom.xml'
 ##################################################
+
+echo -e "\n##################################################\nThe small error the old project\n##################################################\n"
 
 ### 'javax' missing
 find ${G_NAME}/ -name "pom.xml" -exec sed -i "s/>servlet-api/>javax.servlet-api/g" {} +
@@ -43,8 +47,93 @@ find ${G_NAME}/ -name "pom.xml" -exec sed -i -E "s/(http:\/\/repo.spring)/https:
 ### redundant nexus repos
 find ${G_NAME}/ -name "pom.xml" -exec sed -i "/<distributionManagement>/,/<\/distributionManagement>/d" {} +
 
+### missing version of maven war plugin
+printf '%s\n' '0?<artifactId>maven-war-plugin<\/artifactId>?a' '<version>3.3.2</version>' . x | ex ${G_NAME}/"pom.xml"
+
+### missing 'validator' attribute
+sed -i -E ':a;N;$!ba; s/org.hibernate/org.hibernate.validator/2' ${G_NAME}/"pom.xml"
+
+### delete duplicate of maven war plugin
+##################################################
+
+echo -e "##################################################\nRemoving duplicates\n##################################################\n"
+
+DUPLICATE_NUMBER=`grep -n -m1 'maven-war' ${G_NAME}/pom.xml | cut -f1 -d:`
+DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
+DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
+
+### delete duplicate TOP
+EDGE=true
+while [ "$EDGE" = true ]; do
+    
+    if ! [[ "$DUPLICATE_LINE" == "<plugins>" ]]; then
+        sed -i "${DUPLICATE_NUMBER}d" ${G_NAME}/pom.xml
+    
+        ((DUPLICATE_NUMBER--))
+    else
+        EDGE=false
+        ((DUPLICATE_NUMBER+=1))    
+    fi
+    
+    DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
+    DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
+done
+
+### delete duplicate DOWN
+EDGE=true
+while [ "$EDGE" = true ]; do
+    
+    if ! [[ "$DUPLICATE_LINE" == "<plugin>" ]]; then
+        sed -i "${DUPLICATE_NUMBER}d" ${G_NAME}/pom.xml
+
+        DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
+        DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
+    else
+        EDGE=false
+    fi
+done
+
+### duplicate of postgresql block
+##################################################
+DUPLICATE_NUMBER=`grep -n "org.postgresql" ${G_NAME}/pom.xml | sed -n 2p | cut -f1 -d:`
+DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
+DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
+
+### delete duplicate TOP
+EDGE=true
+while [ "$EDGE" = true ]; do
+    
+    if ! [[ "$DUPLICATE_LINE" == "</dependency>" ]]; then
+        sed -i "${DUPLICATE_NUMBER}d" ${G_NAME}/pom.xml
+    
+        ((DUPLICATE_NUMBER--))
+    else
+        EDGE=false
+        ((DUPLICATE_NUMBER+=1))    
+    fi
+    
+    DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
+    DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
+done
+
+### delete duplicate DOWN
+EDGE=true
+while [ "$EDGE" = true ]; do
+    
+    if ! [[ "$DUPLICATE_LINE" == "<!--Servlet API-->" ]]; then
+        sed -i "${DUPLICATE_NUMBER}d" ${G_NAME}/pom.xml
+
+        DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
+        DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
+    else
+        EDGE=false
+    fi
+done
+
 ### fixing front-end
 ##################################################
+
+echo -e "##################################################\nFront-end fixing\n##################################################\n"
 
 ### wrong path to favicon.ico
 find ${G_NAME}/src/main/webapp -name "index.html" -exec sed -i 's/\/src\/assets/.\/static/g' {} +
@@ -75,11 +164,15 @@ sed -i -E \
 ### project deploying
 ##################################################
 
+echo -e "##################################################\nThe project building\n##################################################\n"
+
 ### reset DB - unstable work of liquibase:dropAll
 #(cd Geocit134; eval mvn liquibase:dropAll)
 
 ### project building
-(cd ${G_NAME}; eval mvn install)
+#(cd ${G_NAME}; eval mvn install)
+
+echo -e "\n##################################################\nThe project deploying\n##################################################\n"
 
 ### project deploying
-sudo cp ${G_NAME}/target/citizen.war /opt/tomcat/latest/webapps
+#sudo cp ${G_NAME}/target/citizen.war /opt/tomcat/latest/webapps

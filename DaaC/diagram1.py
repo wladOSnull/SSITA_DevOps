@@ -62,10 +62,16 @@ centos_attr = {
     "splines":"spline",
 }
 
+# config attribute for instance cluster
+diagram_attr = {
+    "fontsize": "40",
+    "forcelabels": "true",
+}
+
 ### entrypoint
 ##################################################
 
-with Diagram("Geocitizen",  filename="Geocitizen1", show=False):
+with Diagram("Geocitizen",  filename="Geocitizen1", show=False, graph_attr=diagram_attr):
 
     ### remote infrastructure
     with Cluster("AWS", graph_attr=aws_attr):
@@ -74,7 +80,7 @@ with Diagram("Geocitizen",  filename="Geocitizen1", show=False):
         with Cluster("VPC", graph_attr=vpc_attr):
 
             ### server instance
-            with Cluster("Instance Ubuntu", direction="LR", graph_attr=ubuntu_attr) as wer:
+            with Cluster("Instance Ubuntu", direction="LR", graph_attr=ubuntu_attr):
                 
                 # variables
                 java = Java()
@@ -107,7 +113,7 @@ with Diagram("Geocitizen",  filename="Geocitizen1", show=False):
                 ec2_c = EC2()
 
                 # links
-                ec2_c - Edge(label="AMI", color="black", style="dotted") - centos          
+                ec2_c - Edge(label="AMI", color="black", style="dotted") - centos        
 
     # inter-groups links
     tomcat >> \

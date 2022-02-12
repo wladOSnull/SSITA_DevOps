@@ -111,6 +111,10 @@ Ubuntu 20.04.3 LTS (Focal Fossa) -> [Ubuntu Server 20.04.3 Focal Fossa](https://
   Ctrl+D 
   ```
 
+- you can improve accessing to servers with using shortname like `ssh server`
+
+  - [aliases for ssh](https://www.howtogeek.com/75007/stupid-geek-tricks-use-your-ssh-config-file-to-create-aliases-for-hosts/#aoh=16446577456067&referrer=https%3A%2F%2Fwww.google.com&amp_tf=From%20%251%24s&ampshare=https%3A%2F%2Fwww.howtogeek.com%2F75007%2Fstupid-geek-tricks-use-your-ssh-config-file-to-create-aliases-for-hosts%2F)  
+
 ---
 
 ## Ubuntu - Server
@@ -838,6 +842,7 @@ Ubuntu 20.04.3 LTS (Focal Fossa) -> [Ubuntu Server 20.04.3 Focal Fossa](https://
 
 ### Useful links
 
+[aliases for ssh](https://www.howtogeek.com/75007/stupid-geek-tricks-use-your-ssh-config-file-to-create-aliases-for-hosts/#aoh=16446577456067&referrer=https%3A%2F%2Fwww.google.com&amp_tf=From%20%251%24s&ampshare=https%3A%2F%2Fwww.howtogeek.com%2F75007%2Fstupid-geek-tricks-use-your-ssh-config-file-to-create-aliases-for-hosts%2F)  
 [installing Nexus on Ubuntu](https://unixcop.com/install-nexus-repository-on-ubuntu-20-04/)  
 [installing Tomcat 9 on Ubuntu](https://linuxize.com/post/how-to-install-tomcat-9-on-ubuntu-20-04/)  
 [installing node js via npm](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04-ru)  
