@@ -111,7 +111,7 @@ Ubuntu 20.04.3 LTS (Focal Fossa) -> [Ubuntu Server 20.04.3 Focal Fossa](https://
   Ctrl+D 
   ```
 
-- you can improve accessing to servers with using shortname like `ssh server`
+- *OPTIONAL*: you can improve accessing to servers with using shortname like `ssh server`
 
   - [aliases for ssh](https://www.howtogeek.com/75007/stupid-geek-tricks-use-your-ssh-config-file-to-create-aliases-for-hosts/#aoh=16446577456067&referrer=https%3A%2F%2Fwww.google.com&amp_tf=From%20%251%24s&ampshare=https%3A%2F%2Fwww.howtogeek.com%2F75007%2Fstupid-geek-tricks-use-your-ssh-config-file-to-create-aliases-for-hosts%2F)  
 
