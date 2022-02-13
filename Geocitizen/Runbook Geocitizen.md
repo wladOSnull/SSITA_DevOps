@@ -1,4 +1,4 @@
-# Geocitizen project
+# Geo Citizen
 
 **Mint (host) + VBox 6.1.32 Ubuntu (Tomcat 9) + CentOS (PostgreSQL) + java + maven + git + bash + npm**
 

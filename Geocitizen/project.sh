@@ -30,13 +30,13 @@ echo -e "##################################################\nRemoving the old pr
 rm -rf $G_NAME
 
 ### getting
-echo -e "##################################################\nClonning the project again\n##################################################\n"
+echo -e "##################################################\nCloning the project again\n##################################################\n"
 git clone $G_REPOSITORY
 
 ### fixing dependencies and packets in 'pom.xml'
 ##################################################
 
-echo -e "\n##################################################\nThe small error the old project\n##################################################\n"
+echo -e "\n##################################################\nSmall errors fixing\n##################################################\n"
 
 ### 'javax' missing
 find ${G_NAME}/ -name "pom.xml" -exec sed -i "s/>servlet-api/>javax.servlet-api/g" {} +
@@ -56,7 +56,7 @@ sed -i -E ':a;N;$!ba; s/org.hibernate/org.hibernate.validator/2' ${G_NAME}/"pom.
 ### remove duplicates
 ##################################################
 
-echo -e "##################################################\nRemoving duplicates\n##################################################\n"
+echo -e "##################################################\nDuplicates removing\n##################################################\n"
 
 ### function for deleting xml block with specified string
 function REMOVE_XML()

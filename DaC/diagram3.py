@@ -26,7 +26,7 @@ from diagrams.onprem.client import Client
 
 # config attribute for legend cluster
 legend_attr = {
-    "fontsize": "24",
+    "fontsize": "40",
     "bgcolor": "transparent",
     "pencolor": "black",
     "penwidth": "4.0",
@@ -36,44 +36,50 @@ legend_attr = {
 
 # config attribute for AWS cluster
 aws_attr = {
-    "fontsize": "24",
+    "fontsize": "40",
     "bgcolor": "darkgoldenrod1",
     "splines":"spline",
 }
 
 # config attribute for VPC cluster
 vpc_attr = {
-    "fontsize": "22",
+    "fontsize": "35",
     "bgcolor": "white",
     "splines":"spline",
 }
 
 # config attribute for Instance Ubuntu cluster
 ubuntu_attr = {
-    "fontsize": "20",
+    "fontsize": "30",
     "bgcolor": "#D8F2DEFF",
-    "splines":"spline",
+    "splines":"spline"
 }
 
 # config attribute for Instance CentOS cluster
 centos_attr = {
-    "fontsize": "20",
+    "fontsize": "30", 
     "bgcolor": "#ECE8F6FF",
     "splines":"spline",
 }
 
-# config attribute for instance cluster
+# config attribute for main cluster
 diagram_attr = {
-    "fontsize": "40",
+    "fontsize": "50",
     "forcelabels": "true",
-    "splines":"spline",
+    "splines":"spline"
+}
+
+# config for all arrows (edges)
+main_edge_attr = {
+    "minlen": "2.0",
+    "penwidth":"5.0",
+    "concentrate": "true"
 }
 
 ### entrypoint
 ##################################################
 
-#with Diagram("Geocitizen",  filename="Geocitizen1", show=False, graph_attr=diagram_attr):
-with Diagram("Geocitizen",  filename="Geocitizen3", show=False, graph_attr=diagram_attr):
+with Diagram("Geo Citizen",  filename="Geocitizen3", show=False, graph_attr=diagram_attr, edge_attr=main_edge_attr):
 
     ### remote infrastructure
     with Cluster("AWS", graph_attr=aws_attr):
@@ -87,21 +93,21 @@ with Diagram("Geocitizen",  filename="Geocitizen3", show=False, graph_attr=diagr
                 # variables
                 java = Java()
                 ubuntu = Ubuntu()
-                geo = Custom("Geocit134", "./img/geocitizen.png")
+                geo = Custom("", "./img/geocitizen.png")
                 tomcat = Custom("", "./img/tomcat.png")
                 maven = Custom("", "./img/maven.png")
                 ec2_u = EC2()
                 
                 # links
                 java \
-                    << Edge(label="usage", style="dashed") \
+                    << Edge(label="usage", style="dashed", fontsize="25") \
                     << maven
 
-                maven >> Edge(label="build") >> geo
+                maven >> Edge(label="build", fontsize="25") >> geo
 
                 #tomcat >> Edge(label="usage", style="dashed") >> java
-                tomcat >> Edge(label="host",style="bold", color="darkgreen") >> geo
-                ec2_u - Edge(label="AMI", color="black", style="dotted") - ubuntu
+                tomcat >> Edge(label="host",style="bold", color="darkgreen", fontsize="25") >> geo
+                ec2_u - Edge(label="AMI", color="black", style="dotted", fontsize="25") - ubuntu
 
                 ubuntu - Edge(style="dotted") - [tomcat, java, maven, geo]
 
@@ -117,13 +123,13 @@ with Diagram("Geocitizen",  filename="Geocitizen3", show=False, graph_attr=diagr
                 ec2_c = EC2()
 
                 # links
-                ec2_c - Edge(label="AMI", color="black", style="dotted") - centos
+                ec2_c - Edge(label="AMI", color="black", style="dotted", fontsize="25") - centos
 
                 centos - Edge(style="dotted") - psql          
 
     # inter-groups links
     tomcat >> \
-        Edge(label="jdbc:connector", style="bold", color="darkgreen") \
+        Edge(label="jdbc:connector", style="bold", color="darkgreen", fontsize="25") \
         << psql
 
 ### gloabal scope
@@ -136,23 +142,23 @@ with Diagram("Geocitizen",  filename="Geocitizen3", show=False, graph_attr=diagr
     
     # global links of IaC
     jenkins \
-        << Edge(label="response", style="dotted", color="black") \
+        << Edge(label="response", style="dotted", color="black", fontsize="25") \
         << terraform
 
     jenkins \
-        >> Edge(label="call 1", style="bold", color="red") \
+        >> Edge(label="call 1", style="bold", color="red", fontsize="25") \
         >> terraform
 
     jenkins \
-        >> Edge(label="call 2", style="bold", color="red") \
+        >> Edge(label="call 2", style="bold", color="red", fontsize="25") \
         >> ansible \
 
     terraform \
-        >> Edge(label="create", color="black") \
+        >> Edge(label="create", color="black", fontsize="25") \
         >> [ec2_u, ec2_c]
 
     ansible \
-        >> Edge(label="configure", color="black") \
+        >> Edge(label="configure", color="black", fontsize="25") \
         >> [tomcat, psql]
 
     ### cheat for prettifying
@@ -160,13 +166,13 @@ with Diagram("Geocitizen",  filename="Geocitizen3", show=False, graph_attr=diagr
     #geo >> Edge(label="queries", color="darkgreen", style="bold") >> psql
 
     ### human-type links
-    User("DevOps") >> Edge(label="run", style="bold", color="red") >> jenkins
-    Client("Clients") >> Edge(label="usage", style="bold", color="darkgreen") >> tomcat
+    User("") >> Edge(label="run", style="bold", color="red", fontsize="25") >> jenkins
+    Client("") >> Edge(label="usage", style="bold", color="darkgreen", fontsize="25") >> tomcat
 
 ### legend
 ##################################################
 
-    with Cluster(label="Legend",graph_attr=legend_attr):
+    with Cluster(label="Legend", graph_attr=legend_attr):
         # empty variables
         none1 = Custom("", "./img/null.png")
         none2 = Custom("", "./img/null.png")
@@ -178,17 +184,17 @@ with Diagram("Geocitizen",  filename="Geocitizen3", show=False, graph_attr=diagr
 
         # descri[tion for all types of arrows
         none1 \
-        >> Edge(label="to perform actions with\n creation/configuration/settig up", color="black") \
+        >> Edge(label="to perform actions with\n creation/configuration/settig up", color="black", fontsize="25") \
         >> none2 \
-        >> Edge(label="to use\n / to interact with", color="darkgreen", style="bold") \
+        >> Edge(label="to use\n / to interact with", color="darkgreen", style="bold", fontsize="25") \
         >> none3 \
-        >> Edge(label="to call/trigger for\n performing some actions", color="red", style="bold") \
+        >> Edge(label="to call/trigger for\n performing some actions", color="red", style="bold", fontsize="25") \
         >> none4 \
-        >> Edge(label="to response with\n some information/file/etc.", color="black", style="dotted") \
+        >> Edge(label="to response with\n some information/file/etc.", color="black", style="dotted", fontsize="25") \
         >> none5 \
-        >> Edge(label="to depend on ...\n / to use smth. to work", color="black", style="dashed") \
+        >> Edge(label="to depend on ...\n / to use smth. to work", color="black", style="dashed", fontsize="25") \
         >> none6
 
         none6 \
-        - Edge(label="to consist\n / to contain", color="black", style="dotted") \
+        - Edge(label="to consist\n / to contain", color="black", style="dotted", fontsize="25") \
         - none7
