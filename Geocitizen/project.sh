@@ -39,16 +39,16 @@ git clone $G_REPOSITORY
 echo -e "\n##################################################\nSmall errors fixing\n##################################################\n"
 
 ### 'javax' missing
-find ${G_NAME}/ -name "pom.xml" -exec sed -i "s/>servlet-api/>javax.servlet-api/g" {} +
+sed -i "s/>servlet-api/>javax.servlet-api/g" ${G_NAME}/"pom.xml"
 
 ### https for 2 repo
-find ${G_NAME}/ -name "pom.xml" -exec sed -i -E "s/(http:\/\/repo.spring)/https:\/\/repo.spring/g" {} +
+sed -i -E "s/(http:\/\/repo.spring)/https:\/\/repo.spring/g" ${G_NAME}/"pom.xml"
 
 ### redundant nexus repos
-find ${G_NAME}/ -name "pom.xml" -exec sed -i "/<distributionManagement>/,/<\/distributionManagement>/d" {} +
+sed -i "/<distributionManagement>/,/<\/distributionManagement>/d" ${G_NAME}/pom.xml
 
 ### missing version of maven war plugin
-printf '%s\n' '0?<artifactId>maven-war-plugin<\/artifactId>?a' '<version>3.3.2</version>' . x | ex ${G_NAME}/"pom.xml"
+printf '%s\n' '0?<artifactId>maven-war-plugin<\/artifactId>?a' '                <version>3.3.2</version>' . x | ex ${G_NAME}/"pom.xml"
 
 ### missing 'validator' attribute
 sed -i -E ':a;N;$!ba; s/org.hibernate/org.hibernate.validator/2' ${G_NAME}/"pom.xml"
@@ -59,27 +59,30 @@ sed -i -E ':a;N;$!ba; s/org.hibernate/org.hibernate.validator/2' ${G_NAME}/"pom.
 echo -e "##################################################\nDuplicates removing\n##################################################\n"
 
 ### function for deleting xml block with specified string
-function REMOVE_XML()
+function XML_OBJECT_REMOVE()
 {
     ### $1 - UP TO
     ### $2 - DOWN TO
     echo -e "${1} ---------- ${2}\n"
+    
+    ### $3 - line pointer
+    POINTER=$3
 
     ### delete duplicate TOP
     EDGE=true
     while [ "$EDGE" = true ]; do
         
         if ! [[ "$DUPLICATE_LINE" == "${1}" ]]; then
-            sed -i "${DUPLICATE_NUMBER}d" ${G_NAME}/pom.xml
+            sed -i "${POINTER}d" ${G_NAME}/pom.xml
         
-            ((DUPLICATE_NUMBER--))
+            ((POINTER--))
+            DUPLICATE_LINE=`sed -n "${POINTER}p" < ${G_NAME}/pom.xml`
+            DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
         else
             EDGE=false
-            ((DUPLICATE_NUMBER+=1))    
+            sed -i "${POINTER}d" ${G_NAME}/pom.xml
         fi
         
-        DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
-        DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
     done
 
     ### delete duplicate DOWN
@@ -87,13 +90,15 @@ function REMOVE_XML()
     while [ "$EDGE" = true ]; do
         
         if ! [[ "$DUPLICATE_LINE" == "${2}" ]]; then
-            sed -i "${DUPLICATE_NUMBER}d" ${G_NAME}/pom.xml
+            sed -i "${POINTER}d" ${G_NAME}/pom.xml
 
-            DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
+            DUPLICATE_LINE=`sed -n "${POINTER}p" < ${G_NAME}/pom.xml`
             DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
         else
             EDGE=false
+            sed -i "${POINTER}d" ${G_NAME}/pom.xml
         fi
+
     done
 }
 
@@ -101,21 +106,21 @@ function REMOVE_XML()
 DUPLICATE_NUMBER=`grep -n -m1 'maven-war' ${G_NAME}/pom.xml | cut -f1 -d:`
 DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
 DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
-TOP="<plugins>"
-DOWN="<plugin>"
+TOP="<plugin>"
+DOWN="</plugin>"
 
 ### remove it
-REMOVE_XML $TOP $DOWN
+XML_OBJECT_REMOVE $TOP $DOWN $DUPLICATE_NUMBER
 
 ### get the duplicate of postgresql plugin
 DUPLICATE_NUMBER=`grep -n "org.postgresql" ${G_NAME}/pom.xml | sed -n 2p | cut -f1 -d:`
 DUPLICATE_LINE=`sed -n "${DUPLICATE_NUMBER}p" < ${G_NAME}/pom.xml`
 DUPLICATE_LINE=`echo $DUPLICATE_LINE | sed 's/ *$//g'`
-TOP="</dependency>"
-DOWN="<!--Servlet API-->"
+TOP="<dependency>"
+DOWN="</dependency>"
 
 ### remove it
-REMOVE_XML $TOP "${DOWN}"
+XML_OBJECT_REMOVE $TOP $DOWN $DUPLICATE_NUMBER
 
 ### fixing front-end
 ##################################################
@@ -123,7 +128,7 @@ REMOVE_XML $TOP "${DOWN}"
 echo -e "##################################################\nFront-end fixing\n##################################################\n"
 
 ### wrong path to favicon.ico
-find ${G_NAME}/src/main/webapp -name "index.html" -exec sed -i 's/\/src\/assets/.\/static/g' {} +
+sed -i 's/\/src\/assets/.\/static/g' ${G_NAME}/src/main/webapp/"index.html"
 
 ### wrong back-end in minificated .js files
 find ./${G_NAME}/src/main/webapp/static/js/ -type f -exec sed -i "s/localhost/${G_SERVER_IP}/g" {} +
@@ -157,9 +162,9 @@ echo -e "##################################################\nThe project buildin
 #(cd Geocit134; eval mvn liquibase:dropAll)
 
 ### project building
-#(cd ${G_NAME}; eval mvn install)
+(cd ${G_NAME}; eval mvn install)
 
 echo -e "\n##################################################\nThe project deploying\n##################################################\n"
 
 ### project deploying
-#sudo cp ${G_NAME}/target/citizen.war /opt/tomcat/latest/webapps
+sudo cp ${G_NAME}/target/citizen.war /opt/tomcat/latest/webapps
