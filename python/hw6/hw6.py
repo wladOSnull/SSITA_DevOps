@@ -36,9 +36,6 @@ docker_file.run_all('yum clean all')
 ### provisioming with the web page
 docker_file.add_file(myhtml_path_local, myhtml_path_container)
 
-#docker_file.prefix('ENV', 'JAVA_HOME', '/usr/lib/jvm/java-openjdk')
-#docker_file.prefix('ENV', 'PATH', '/opt/gradle-2.5/bin:$PATH')
-
 ### build Docker image
 ##################################################
 docker_conn.build_from_file(docker_file, tag_name)

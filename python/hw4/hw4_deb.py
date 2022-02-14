@@ -7,10 +7,8 @@ package = deb_pkg_tools.package.inspect_package_fields(sys.argv[1])
 ### printing specified fields from header
 ##################################################
 print(package['Package'],
-        package['Version'],
+        package['Version'], ' ',
         sep='\n')
-
-print("\n\n")
 
 ### printing all fields from header
 ##################################################
