@@ -105,13 +105,13 @@ with Diagram("Geo Citizen",  filename="Geocitizen3", show=False, graph_attr=diag
 
                 maven >> Edge(label="build", fontsize="25") >> geo
 
-                #tomcat >> Edge(label="usage", style="dashed") >> java
+                geo >> Edge(label="usage", style="dashed", fontsize="25") >> java
                 tomcat >> Edge(label="host",style="bold", color="darkgreen", fontsize="25") >> geo
                 ec2_u - Edge(label="AMI", color="black", style="dotted", fontsize="25") - ubuntu
 
                 ubuntu - Edge(style="dotted") - [tomcat, java, maven, geo]
 
-                ### cheat for prettifying
+                # cheat for prettifying
                 tomcat >> Edge(color="#00000000") >> java
 
             ### DB instance
@@ -127,8 +127,10 @@ with Diagram("Geo Citizen",  filename="Geocitizen3", show=False, graph_attr=diag
 
                 centos - Edge(style="dotted") - psql          
 
-    # inter-groups links
-    tomcat >> \
+    ### inter-groups links
+    tomcat >> Edge(color="#00000000") << psql
+
+    geo >> \
         Edge(label="jdbc:connector", style="bold", color="darkgreen", fontsize="25") \
         << psql
 
@@ -161,13 +163,9 @@ with Diagram("Geo Citizen",  filename="Geocitizen3", show=False, graph_attr=diag
         >> Edge(label="configure", color="black", fontsize="25") \
         >> [tomcat, psql]
 
-    ### cheat for prettifying
-    geo >> Edge(color="#00000000") >> psql
-    #geo >> Edge(label="queries", color="darkgreen", style="bold") >> psql
-
     ### human-type links
     User("") >> Edge(label="run", style="bold", color="red", fontsize="25") >> jenkins
-    Client("") >> Edge(label="usage", style="bold", color="darkgreen", fontsize="25") >> tomcat
+    Client("") >> Edge(label="usage", style="bold", color="darkgreen", fontsize="25") << tomcat
 
 ### legend
 ##################################################
