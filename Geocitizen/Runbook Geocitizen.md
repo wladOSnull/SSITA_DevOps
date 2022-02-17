@@ -250,6 +250,8 @@ Ubuntu 20.04.3 LTS (Focal Fossa) -> [Ubuntu Server 20.04.3 Focal Fossa](https://
   - on local machine web browser: [ip-of-VM:8080](ip-of-VM:8080)  
   > to get ip of VM: hostname -I
 
+### Apache Tomcat - optional configuring
+
 - configuring of tomcat **service users** for accessing "Server Status", "Manager App", "Host Manager" from tomcat start page:  
   
   ```bash
@@ -271,8 +273,6 @@ Ubuntu 20.04.3 LTS (Focal Fossa) -> [Ubuntu Server 20.04.3 Focal Fossa](https://
   ~ sudo systemctl restart tomcat.service
   ~ sudo systemctl status tomcat.service
   ```
-
-### Apache Tomcat - optional coonfiguring
 
 - configuring of accessing to "Server Status", "Manager App" from tomcat start page:
 
@@ -441,28 +441,6 @@ Ubuntu 20.04.3 LTS (Focal Fossa) -> [Ubuntu Server 20.04.3 Focal Fossa](https://
   Ctrl+D
   ```
 
-  >*TIP*: there is bash script for in the end of this guide for dropping only (if exists) user of DB for the application, creating user of DB for the application, creating DBs for the application and granting privileges on DBs for the user + outputing base info about necessary stuff also **OR** you can make all configuration manually ... :
-
-
-- creating user for the project and his first own DB
-
-  ```bash
-  ~ sudo -U postgres psql
-
-  # creating new user for the project
-  ~ CREATE USER geocitizen WITH PASSWORD '<some-pass>';
-  ~ ALTER USER geocitizen CREATEDB;
-
-  # list all users
-  ~ \du
-
-  # create test DB for new user
-  ~ CREATE DATABASE geo_test;
-  ~ GRANT ALL PRIVILEGES ON DATABASE geo_test TO geocitizen;
-
-  ~ \q
-  ```
-
 - making PostgreSQL databases accessible via login+pass
 
   ```bash
@@ -485,32 +463,6 @@ Ubuntu 20.04.3 LTS (Focal Fossa) -> [Ubuntu Server 20.04.3 Focal Fossa](https://
   ```bash
   ~ systemctl restart postgresql.service
   ~ systemctl status postgresql.service
-  ```
-
-- checking login into DB with username&password of user  
-
-  ```bash
-  # psql -d <db-name> -U <user-name>
-  ~ psql -d geo_test -U geocitizen
-  # input pass of geocitizen user
-
-  # logout
-  ~ \q
-  ```
-
-- creating DB for the project by user of the project
-
-  ```bash
-  ~ psql -d geo_test -U geocitizen
-  # type geocitizen's password
-
-  # creating of main DB for the project
-  ~ CREATE DATABASE ss_demo_1;
-
-  # creting of test DB for the project
-  ~ CREATE DATABASE ss_demo_1_test;
-
-  ~ \q
   ```
 
 - making PostgreSQL accessible from the other machines (Ubuntu as server and Mint as host)
@@ -558,6 +510,54 @@ Ubuntu 20.04.3 LTS (Focal Fossa) -> [Ubuntu Server 20.04.3 Focal Fossa](https://
   ~ systemctl status postgresql.service
   ```
 
+  >*TIP*: there is bash script for in the end of this guide for dropping only (if exists) user of DB for the application, creating user of DB for the application, creating DBs for the application and granting privileges on DBs for the user + outputing base info about necessary stuff also **OR** you can make all configuration manually ... :
+
+
+- creating user for the project and his first own DB
+
+  ```bash
+  ~ sudo -U postgres psql
+
+  # creating new user for the project
+  ~ CREATE USER geocitizen WITH PASSWORD '<some-pass>';
+  ~ ALTER USER geocitizen CREATEDB;
+
+  # list all users
+  ~ \du
+
+  # create test DB for new user
+  ~ CREATE DATABASE geo_test;
+  ~ GRANT ALL PRIVILEGES ON DATABASE geo_test TO geocitizen;
+
+  ~ \q
+  ```
+  
+- checking login into DB with username&password of user  
+
+  ```bash
+  # psql -d <db-name> -U <user-name>
+  ~ psql -d geo_test -U geocitizen
+  # input pass of geocitizen user
+
+  # logout
+  ~ \q
+  ```
+
+- creating DB for the project by user of the project
+
+  ```bash
+  ~ psql -d geo_test -U geocitizen
+  # type geocitizen's password
+
+  # creating of main DB for the project
+  ~ CREATE DATABASE ss_demo_1;
+
+  # creting of test DB for the project
+  ~ CREATE DATABASE ss_demo_1_test;
+
+  ~ \q
+  ```
+  
 - at this point you can check connection/accessability to PostgreSQL with installed on Ubuntu or your host machine 'pgAdmin' or 'psql' utility or standart (for Linux) command 'nc' (they are described in Appendix to this guide) 
 ---
 
